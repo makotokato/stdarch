@@ -18,9 +18,10 @@ set -ex
 # located in https://github.com/appunite/docker by just wrapping it in a script
 # which apparently magically accepts the licenses.
 
+SDK=4333796
 mkdir sdk
-curl --retry 5 https://dl.google.com/android/repository/sdk-tools-linux-3859397.zip -O
-unzip -d sdk sdk-tools-linux-3859397.zip
+curl --retry 5 https://dl.google.com/android/repository/sdk-tools-linux-${SDK}.zip -O
+unzip -q -d sdk sdk-tools-linux-${SDK}.zip
 
 case "$1" in
   arm | armv7)
