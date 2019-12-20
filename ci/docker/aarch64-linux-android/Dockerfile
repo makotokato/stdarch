@@ -1,7 +1,6 @@
-FROM ubuntu:16.04
+FROM ubuntu:18.04
 
-RUN dpkg --add-architecture i386 && \
-    apt-get update && \
+RUN apt-get update && \
     apt-get install -y --no-install-recommends \
   file \
   make \
@@ -10,8 +9,7 @@ RUN dpkg --add-architecture i386 && \
   python \
   unzip \
   expect \
-  openjdk-9-jre \
-  libstdc++6:i386 \
+  openjdk-8-jre \
   libpulse0 \
   gcc \
   libc6-dev
