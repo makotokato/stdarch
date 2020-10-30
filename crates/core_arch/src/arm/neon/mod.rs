@@ -589,6 +589,108 @@ pub unsafe fn vaddl_u32(a: uint32x2_t, b: uint32x2_t) -> uint64x2_t {
     simd_add(a, b)
 }
 
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_s8(low: int8x8_t, high: int8x8_t) -> int8x16_t {
+    simd_shuffle16(
+        low,
+        high,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    )
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_s16(low: int16x4_t, high: int16x4_t) -> int16x8_t {
+    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_s32(low: int32x2_t, high: int32x2_t) -> int32x4_t {
+    simd_shuffle4(low, high, [0, 1, 2, 3])
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_u8(low: uint8x8_t, high: uint8x8_t) -> uint8x16_t {
+    simd_shuffle16(
+        low,
+        high,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    )
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_u16(low: uint16x4_t, high: uint16x4_t) -> uint16x8_t {
+    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_u32(low: uint32x2_t, high: uint32x2_t) -> uint32x4_t {
+    simd_shuffle4(low, high, [0, 1, 2, 3])
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_f32(low: float32x2_t, high: float32x2_t) -> float32x4_t {
+    simd_shuffle4(low, high, [0, 1, 2, 3])
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_p8(low: poly8x8_t, high: poly8x8_t) -> poly8x16_t {
+    simd_shuffle16(
+        low,
+        high,
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
+    )
+}
+
+/// Vector combine
+#[inline]
+#[target_feature(enable = "neon")]
+#[cfg_attr(target_arch = "arm", target_feature(enable = "v7"))]
+#[cfg_attr(all(test, target_arch = "arm"), assert_instr(vmov))]
+#[cfg_attr(all(test, target_arch = "aarch64"), assert_instr(mov))]
+pub unsafe fn vcombine_p16(low: poly16x4_t, high: poly16x4_t) -> poly16x8_t {
+    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
+}
+
 /// Vector narrow integer.
 #[inline]
 #[target_feature(enable = "neon")]
@@ -2290,6 +2392,33 @@ mod tests {
         let r: u64x2 = transmute(vaddl_u32(transmute(a), transmute(a)));
         assert_eq!(r, e);
     }
+
+    macro_rules! test_vcombine {
+        ($test_id:ident => $fn_id:ident ([$($a:expr),*], [$($b:expr),*])) => {
+            #[allow(unused_assignments)]
+            #[simd_test(enable = "neon")]
+            unsafe fn $test_id() {
+                let a = [$($a),*];
+                let b = [$($b),*];
+                let e = [$($a),* $(, $b)*];
+                let c = $fn_id(transmute(a), transmute(b));
+                let mut d = e;
+                d = transmute(c);
+                assert_eq!(d, e);
+            }
+        }
+    }
+
+    test_vcombine!(test_vcombine_s8 => vcombine_s8([3_i8, -4, 5, -6, 7, 8, 9, 10], [13_i8, -14, 15, -16, 17, 18, 19, 110]));
+    test_vcombine!(test_vcombine_u8 => vcombine_u8([3_u8, 4, 5, 6, 7, 8, 9, 10], [13_u8, 14, 15, 16, 17, 18, 19, 110]));
+    test_vcombine!(test_vcombine_p8 => vcombine_p8([3_u8, 4, 5, 6, 7, 8, 9, 10], [13_u8, 14, 15, 16, 17, 18, 19, 110]));
+
+    test_vcombine!(test_vcombine_s16 => vcombine_s16([3_i16, -4, 5, -6], [13_i16, -14, 15, -16]));
+    test_vcombine!(test_vcombine_u16 => vcombine_u16([3_u16, 4, 5, 6], [13_u16, 14, 15, 16]));
+    test_vcombine!(test_vcombine_p16 => vcombine_p16([3_u16, 4, 5, 6], [13_u16, 14, 15, 16]));
+    test_vcombine!(test_vcombine_s32 => vcombine_s32([3_i32, -4], [13_i32, -14]));
+    test_vcombine!(test_vcombine_u32 => vcombine_u32([3_u32, 4], [13_u32, 14]));
+    test_vcombine!(test_vcombine_f32 => vcombine_f32([3_f32, -4.], [13_f32, -14.]));
 
     #[simd_test(enable = "neon")]
     unsafe fn test_vmvn_s8() {

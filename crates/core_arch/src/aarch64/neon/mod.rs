@@ -902,64 +902,8 @@ pub unsafe fn vpmaxq_f64(a: float64x2_t, b: float64x2_t) -> float64x2_t {
 #[inline]
 #[target_feature(enable = "neon")]
 #[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_s8(low: int8x8_t, high: int8x8_t) -> int8x16_t {
-    simd_shuffle16(
-        low,
-        high,
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    )
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_s16(low: int16x4_t, high: int16x4_t) -> int16x8_t {
-    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_s32(low: int32x2_t, high: int32x2_t) -> int32x4_t {
-    simd_shuffle4(low, high, [0, 1, 2, 3])
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
 pub unsafe fn vcombine_s64(low: int64x1_t, high: int64x1_t) -> int64x2_t {
     simd_shuffle2(low, high, [0, 1])
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_u8(low: uint8x8_t, high: uint8x8_t) -> uint8x16_t {
-    simd_shuffle16(
-        low,
-        high,
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    )
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_u16(low: uint16x4_t, high: uint16x4_t) -> uint16x8_t {
-    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_u32(low: uint32x2_t, high: uint32x2_t) -> uint32x4_t {
-    simd_shuffle4(low, high, [0, 1, 2, 3])
 }
 
 /// Vector combine
@@ -987,34 +931,6 @@ pub unsafe fn vcombine_f16 ( low: float16x4_t,  high: float16x4_t) -> float16x8_
     simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
 }
 */
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_f32(low: float32x2_t, high: float32x2_t) -> float32x4_t {
-    simd_shuffle4(low, high, [0, 1, 2, 3])
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_p8(low: poly8x8_t, high: poly8x8_t) -> poly8x16_t {
-    simd_shuffle16(
-        low,
-        high,
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
-    )
-}
-
-/// Vector combine
-#[inline]
-#[target_feature(enable = "neon")]
-#[cfg_attr(test, assert_instr(mov))]
-pub unsafe fn vcombine_p16(low: poly16x4_t, high: poly16x4_t) -> poly16x8_t {
-    simd_shuffle8(low, high, [0, 1, 2, 3, 4, 5, 6, 7])
-}
 
 /// Vector combine
 #[inline]
@@ -2461,22 +2377,11 @@ mod tests {
         }
     }
 
-    test_vcombine!(test_vcombine_s8 => vcombine_s8([3_i8, -4, 5, -6, 7, 8, 9, 10], [13_i8, -14, 15, -16, 17, 18, 19, 110]));
-    test_vcombine!(test_vcombine_u8 => vcombine_u8([3_u8, 4, 5, 6, 7, 8, 9, 10], [13_u8, 14, 15, 16, 17, 18, 19, 110]));
-    test_vcombine!(test_vcombine_p8 => vcombine_p8([3_u8, 4, 5, 6, 7, 8, 9, 10], [13_u8, 14, 15, 16, 17, 18, 19, 110]));
-
-    test_vcombine!(test_vcombine_s16 => vcombine_s16([3_i16, -4, 5, -6], [13_i16, -14, 15, -16]));
-    test_vcombine!(test_vcombine_u16 => vcombine_u16([3_u16, 4, 5, 6], [13_u16, 14, 15, 16]));
-    test_vcombine!(test_vcombine_p16 => vcombine_p16([3_u16, 4, 5, 6], [13_u16, 14, 15, 16]));
     // FIXME: 16-bit floats
     // test_vcombine!(test_vcombine_f16 => vcombine_f16([3_f16, 4., 5., 6.],
     // [13_f16, 14., 15., 16.]));
 
-    test_vcombine!(test_vcombine_s32 => vcombine_s32([3_i32, -4], [13_i32, -14]));
-    test_vcombine!(test_vcombine_u32 => vcombine_u32([3_u32, 4], [13_u32, 14]));
     // note: poly32x4 does not exist, and neither does vcombine_p32
-    test_vcombine!(test_vcombine_f32 => vcombine_f32([3_f32, -4.], [13_f32, -14.]));
-
     test_vcombine!(test_vcombine_s64 => vcombine_s64([-3_i64], [13_i64]));
     test_vcombine!(test_vcombine_u64 => vcombine_u64([3_u64], [13_u64]));
     test_vcombine!(test_vcombine_p64 => vcombine_p64([3_u64], [13_u64]));
